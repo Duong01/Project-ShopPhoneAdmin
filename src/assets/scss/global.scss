@@ -1,0 +1,77 @@
+/* 自適應條件查詢框 Start */
+.condition {
+  display: flex;
+  flex-wrap: wrap;
+
+  &-item {
+    display: flex;
+    align-items: center;
+    width: 32%;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+
+    &:nth-child(3n+1),
+    &:nth-child(3n+2) {
+      margin-right: 2%;
+    }
+  }
+
+  &-label {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 130px;
+    padding-right: 3px;
+    font-size: 14px;
+    line-height: 14px;
+    box-sizing: border-box;
+  }
+
+  &-value {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+
+  &-input {
+    display: block;
+    width: 100% !important;
+  }
+}
+
+@media screen and (min-width: 1700px) {
+  .condition-item {
+    width: 23.5%;
+
+    &:nth-child(3n+1),
+    &:nth-child(3n+2) {
+      margin-right: 0;
+    }
+
+    &:nth-child(4n+1),
+    &:nth-child(4n+2),
+    &:nth-child(4n+3) {
+      margin-right: 2%;
+    }
+  }
+}
+/* 自適應條件查詢框 End */
+
+/* 頁面操作欄 Start */
+.tools {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .el-button-group {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  div:nth-child(1),
+  button:nth-child(1) {
+    margin-left: auto;
+  }
+}
+/* 頁面操作欄 End */
