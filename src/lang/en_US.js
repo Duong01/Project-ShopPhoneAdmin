@@ -48,8 +48,8 @@ export default
         'Gậy chụp ảnh, gimbal': 'Photography stick, gimbal',
         'Giá đỡ điện thoại/laptop': 'Phone/laptop stand',
         'Đế, móc điện thoại': 'Phone stand and hook',
-        'Túi chống nước': 'Waterproof bag'
-
+        'Túi chống nước': 'Waterproof bag',
+        'Sản phẩm bán được': 'Products can be sold'
 
     
     }

@@ -1,30 +1,62 @@
 <template>
-  <div>
-    <!-- Button để gọi hàm exportToPDF -->
-    <button @click="exportToPDF">Xuất PDF</button>
-
-    <!-- Phần hiển thị hóa đơn -->
-    <div ref="invoice">
-      <!-- Dữ liệu hóa đơn -->
-      <h2>{{ invoiceTitle }}</h2>
-      <p>Số hóa đơn: {{ invoiceNumber }}</p>
-      <p>Ngày: {{ invoiceDate }}</p>
-      <!-- Các mục hóa đơn -->
-      <ul>
-        <li v-for="item in invoiceItems" :key="item.id">
-          {{ item.name }}: {{ item.price }}
-        </li>
-      </ul>
-      <!-- Tổng cộng -->
-      <p>Tổng cộng: {{ total }}</p>
+  
+<div class="invoice-container" v-for="item in order_details" :key="item.id">
+  <div class="invoice-header">
+    <img src="../../assets/img/logo.jpg" alt="Company Logo">
+    <div>
+      <h2>Hóa Đơn</h2>
+      <p>Mã vận đơn: <span id="tracking-number">{{item.id}}</span></p>
+      <p>Mã đơn hàng: <span id="order-number">{{ item.orderId}}</span></p>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="invoice-address">
+        <h4>Địa chỉ người gửi</h4>
+        <p>số 1 25/4/23 đường phú minh, Phường Minh Khai, Quận Bắc Từ Liêm, Hà Nội </p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="invoice-address">
+        <h4>Địa chỉ người nhận</h4>
+        <p>{{ item.userAddress}}</p>
+      </div>
+    </div>
+  </div>
+  <div class="invoice-details">
+    <h4>Chi tiết đơn hàng</h4>
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th>Sản phẩm</th>
+          <th>Số lượng</th>
+          <th>Đơn giá</th>
+          <th>Tổng</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr >
+          <td>{{ item.productName }}</td>
+          <td>{{ item.qty }}</td>
+          <td>{{ item.productPrice.toLocaleString() }}đ</td>
+          <td>{{ (item.productPrice* item.qty).toLocaleString() }}đ</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="invoice-total">
+    <h4>Tổng tiền: <span id="total-amount">{{ total }}đ</span></h4>
+  </div>
+  <button class="btn btn-primary" @click="exportToPDF">Xuất PDF</button>
+</div>
+
 </template>
 
 <script>
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-
+import axios from "axios";
+import { ref } from 'vue';
 export default {
   name: "HoaDon",
   data() {
@@ -32,17 +64,24 @@ export default {
       invoiceTitle: "Hóa đơn",
       invoiceNumber: "HD001",
       invoiceDate: "11/04/2024",
-      invoiceItems: [
-        { id: 1, name: "Sản phẩm A", price: 100 },
-        { id: 2, name: "Sản phẩm B", price: 150 },
-        { id: 3, name: "Sản phẩm C", price: 200 },
-      ],
+      order_details: []
     };
+  },
+  setup() {
+    const currentDate = ref(new Date().toLocaleDateString());
+
+    return {
+      currentDate
+    };
+  },
+  created(){
+    this.showDetail()
   },
   computed: {
     total() {
-      return this.invoiceItems.reduce((total, item) => total + item.price, 0);
+      return this.order_details.reduce((total, item) => total + item.productPrice* item.qty, 0).toLocaleString();
     },
+    
   },
   methods: {
     exportToPDF() {
@@ -57,6 +96,69 @@ export default {
         pdf.save("hoa-don.pdf"); // Lưu file PDF
       });
     },
+    showDetail() {
+      axios
+        .get(
+          `http://localhost:8181/api/orderdetail/listorderdetail?orderId=${this.$route.params.id}`
+        )
+        .then((res) => {
+          if (res.status == 200) {
+            this.order_details = res.data;
+          } 
+        })
+        .catch((err) => {
+          alert("Co loi", err);
+        });
+    },
   },
 };
 </script>
+<style scoped>
+.invoice-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 2px solid #000;
+    }
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px dashed #000;
+    }
+    .invoice-header img {
+      max-width: 250px;
+      height: auto;
+    }
+    .invoice-address {
+      margin-bottom: 20px;
+      border-bottom: 1px dashed #000;
+      padding-bottom: 10px;
+    }
+    .invoice-details {
+      margin-bottom: 20px;
+      border-bottom: 1px dashed #000;
+      padding-bottom: 10px;
+    }
+    .invoice-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .invoice-table th, .invoice-table td {
+      padding: 10px;
+      border-bottom: 1px dashed #dee2e6;
+    }
+    .invoice-total {
+      margin-top: 20px;
+    }
+li{
+  list-style: none;
+}
+/* .invoice-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+} */
+</style>

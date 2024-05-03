@@ -34,7 +34,7 @@ const routes = [
         component: Home
       },
       {
-        path: '/hoadon',
+        path: '/hoadon/:id',
         name: 'HoaDon',
         component: HoaDon
       },

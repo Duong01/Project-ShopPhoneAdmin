@@ -49,5 +49,6 @@ export default
         'Giá đỡ điện thoại/laptop': 'Giá đỡ điện thoại/laptop',
         'Đế, móc điện thoại': 'Đế, móc điện thoại',
         'Túi chống nước': 'Túi chống nước',
+        'Sản phẩm bán được': 'Sản phẩm bán được'
 
     }

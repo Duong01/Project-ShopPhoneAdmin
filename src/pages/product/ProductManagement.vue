@@ -127,7 +127,7 @@
               {{ option.name }}
             </el-option>
           </el-select>
-          <p>{{ form.selected }}</p>
+          
         </el-form-item>
         <el-form-item label="Qty" :label-width="formLabelWidth">
           <el-input-number  v-model="form.Qty" :min="0" />

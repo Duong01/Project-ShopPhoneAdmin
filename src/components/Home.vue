@@ -1,40 +1,32 @@
 <template>
-    <div class="slider">
-        <div class="admin-right">
-          <Employee/>
-        </div>
+   <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-5">
+        <Employee />
+      </div>
+      <div class="col-lg-7">
+        <pie-chart />
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-import Employee from '@/pages/Employee'
+import Employee from "@/pages/Employee";
+import PieChart from "@/pages/PieChart";
 export default {
-  name: 'HomePage',
-  data () {
-    return {
-    }
+  name: "HomePage",
+  data() {
+    return {};
   },
   components: {
-    Employee
-  }
-}
+    Employee,
+    PieChart,
+  },
+};
 </script>
 <style scoped>
-.admin-right{
-  width: 100%;
-  min-height: 100px;
-  float: left;
-}
-.list{
-  margin: 10px 0;
-}
-.carousel-inner{
-  width: 1500px;
-  height: 500px;
-  align-content: center;
-}
-h4{
-  text-align: center;
-  margin: 10px 0;
+.container-fluid{
+  margin-top: 20px;
 }
 </style>
