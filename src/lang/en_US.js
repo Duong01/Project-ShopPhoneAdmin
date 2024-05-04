@@ -2,22 +2,20 @@ export default
     {
         'Trang chủ': 'Home',
         'Thi': 'Exams',
-        'Danh mục': 'Categories',
-        'Đơn hàng': 'Order',
-        'Giỏ hàng': 'Cart',
+        'Quản lý sản phẩm': 'Product Management',
+        'Quản lý danh mục': 'Categories Management',
+        'Quản lý đơn hàng': 'Cart Management',
+        'Quản lý người dùng': 'Users Management',
         'Mail': 'Mail',
-        'Chờ xác nhận': 'Wait for confirmation',
-        'Chờ lấy hàng': 'Waiting for delivery',
-        'Chờ vận chuyển': 'Waiting for shipping',
+        'Đang xử lý': 'Processing',
+        'Đã xử lý': 'Processed',
+        'Đang vận chuyển': 'Ordering',
         'Đã hoàn thành': 'Success',
         'Tên sản phẩm': 'Product Name',
         'Giá sản phẩm': 'Product Price',
         'Số lượng': 'Qty',
         'Hình ảnh': 'Image',
-        'Màu sắc': 'Color',
-        'Dung lượng': 'Capacity',
         'Đặt hàng': 'Order',
-        'Vận chuyển': 'Order',
         'Tổng tiền': 'Total money',
         'Tìm kiếm': 'Search',
         'Ngôn ngữ': 'Language',
@@ -25,8 +23,6 @@ export default
         'SẢN PHẨM MỚI': 'NEW PRODUCT',
         'GIÁ SỐC ONLINE': 'PRICE SHOCK',
         'GIẢM GIÁ LỚN': 'BIG SALE OFF',
-        'ĐỀ XUẤT CHO BẠN': 'RECOMMENDED FOR YOU',
-        'CÁC SẢN PHẨM CÙNG TẦM GIÁ': 'PRODUCTS IN THE SAME PRICE RANGE',
         'Đánh giá': 'points',
         'Trả góp': 'Installment',
         'Khuyến mãi': 'Promotion',
@@ -52,8 +48,8 @@ export default
         'Gậy chụp ảnh, gimbal': 'Photography stick, gimbal',
         'Giá đỡ điện thoại/laptop': 'Phone/laptop stand',
         'Đế, móc điện thoại': 'Phone stand and hook',
-        'Túi chống nước': 'Waterproof bag'
-
+        'Túi chống nước': 'Waterproof bag',
+        'Sản phẩm bán được': 'Products can be sold'
 
     
     }

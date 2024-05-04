@@ -1,12 +1,10 @@
 <template>
-  <div class="footer">
-    
-  </div>
+   <p>Day la trang Security</p>
 </template>
 
 <script>
 export default {
-  name: 'FooterPage'
+  name: 'SecurityPage'
 }
 </script>
 

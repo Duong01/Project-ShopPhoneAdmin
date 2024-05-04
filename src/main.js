@@ -6,8 +6,9 @@ import router from './router'
 import store from './store'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import i18n from '@/lang'
+
 import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+
 
 const app = createApp(App)
 

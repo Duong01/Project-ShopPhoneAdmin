@@ -1,5 +1,5 @@
 <template>
-<div class="order" v-if="show">
+  <div class="order">
   <div class="content">
       <div class="navbox">
         <el-menu
@@ -8,38 +8,27 @@
           :default-active="$route.path"
           :ellipsis="false"
           router>
-          <el-menu-item index="/order/processing">{{$t('Chờ xác nhận')}}  </el-menu-item>
-          <el-menu-item index="/order/processed">{{$t('Chờ lấy hàng')}}</el-menu-item>
-          <el-menu-item index="/order/ordering">{{$t('Chờ vận chuyển')}}</el-menu-item>
-          <el-menu-item index="/order/success">{{$t('Đã hoàn thành')}}</el-menu-item>
+          <el-menu-item index="/cartmanagement/processing">{{$t('Đang xử lý')}}  </el-menu-item>
+          <el-menu-item index="/cartmanagement/processed">{{$t('Đã xử lý')}}</el-menu-item>
+          <el-menu-item index="/cartmanagement/ordering">{{$t('Đang vận chuyển')}}</el-menu-item>
+          <el-menu-item index="/cartmanagement/success">{{$t('Đã hoàn thành')}}</el-menu-item>
         </el-menu>
       </div>
     </div>
     <el-divider></el-divider>
-    <div class="content">
+    <div class="details_order">
       <router-view/>
     </div>
-</div>
-<div v-else>
-  <p>Bạn chưa đăng nhập</p>
 </div>
 </template>
 
 <script>
-// import axios from 'axios'
 export default {
-  name: 'OrderPage',
-  data(){
-    return{
-     
+  name: "CartPage",
+  data() {
+    return {
     }
-  },
-  computed: {
-    show() {
-      return localStorage.getItem("us") != undefined
-    },
   }
-  
 }
 </script>
 
