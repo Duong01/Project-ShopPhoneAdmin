@@ -16,8 +16,10 @@
         <tr v-for="item, index in order" :key="index">
           <td>{{ index +1 }}</td>
           <td>{{ item.id }}</td>
-          <td>{{ item.createDate }}</td>
-          <td>Dự kiến 3 ngày sau khi đơn hàng được xử lý</td>
+          <td>{{ calculateDelivery(item.createDate) }}</td>
+          <td>
+            Dự kiến giao hàng {{ calculateDeliveryDate(item.createDate) }}
+          </td>
           <td>{{ item.status }}</td>
           <td>
             <button class="btn btn-success" @click="submitOrder(item)">Giao hàng</button>
@@ -27,9 +29,9 @@
           </td>
         </tr>
       </tbody>
-    <p style="font-weight: bold;">{{text}}</p>
-      <button class="btn btn-success">Giao tất cả</button>
     </table>
+    <p style="font-weight: bold; text-align: center;">{{text}}</p>
+      <button class="btn btn-success">Giao tất cả</button>
   </div>
 </template>
 
@@ -48,6 +50,17 @@ export default {
     this.getAll()
   },
   methods: {
+    // Date Time
+    calculateDeliveryDate(createDate) {
+      const deliveryDate = new Date(createDate); // Tạo một đối tượng ngày từ ngày đặt hàng
+      deliveryDate.setDate(deliveryDate.getDate() + 3); // Thêm 3 ngày vào ngày đặt hàng
+      return deliveryDate.toISOString().slice(0, 10); // Trả về ngày giao hàng dự kiến dưới dạng YYYY-MM-DD
+    },
+    calculateDelivery(createDate) {
+      const deliveryDate = new Date(createDate); // Tạo một đối tượng ngày từ ngày đặt hàng
+      deliveryDate.setDate(deliveryDate.getDate()); // Thêm 3 ngày vào ngày đặt hàng
+      return deliveryDate.toISOString().slice(0, 10); // Trả về ngày giao hàng dự kiến dưới dạng YYYY-MM-DD
+    },
     getAll() {
         axios.get(`http://localhost:8181/api/order/listorderbyid?status=${this.name}`)
         .then((res) => {

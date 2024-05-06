@@ -23,6 +23,8 @@ export default
         'SẢN PHẨM MỚI': 'SẢN PHẨM MỚI',
         'GIÁ SỐC ONLINE': 'GIÁ SỐC ONLINE',
         'GIẢM GIÁ LỚN': 'GIẢM GIÁ LỚN',
+        'Doanh thu': 'Doanh thu',
+        'Số lượng bán ra': 'Số lượng bán ra',
         'Đánh giá': 'Đánh giá',
         'Trả góp': 'Trả góp',
         'Khuyến mãi': 'Khuyến mãi',

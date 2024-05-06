@@ -11,11 +11,11 @@
     <el-table-column prop="email" label="Email" width="400" />
     <el-table-column prop="fullname" label="Full Name" width="120" />
     <el-table-column prop="dob" label="Dob" width="120" />
+    <el-table-column prop="phone" label="Phone" width="120" />
     <el-table-column prop="password" label="Password" width="120" />
-    <el-table-column prop="role_id" label="Role_id" width="120" />
     <el-table-column prop="address" label="Address" width="200" />
     <el-table-column prop="status" label="Status" width="120" />
-    <el-table-column prop="captcha" label="Captcha" width="120" />
+    <el-table-column prop="role_id" label="Role_id" width="120" />
     <el-table-column fixed="right" label="Operations" width="150">
         <template v-slot="scope">
           <el-tooltip content="Lock" placement="top">

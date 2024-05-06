@@ -1,6 +1,10 @@
 <template>
   <div class="container" v-loading="this.$store.state.isLoading">
+    <select v-model="selectedMonth" @change="getDataByMonth" class="custom-select">
+      <option v-for="(month, index) in months" :key="index" :value="index+1">{{ month }}</option>
+    </select>
     <h2 class="">{{$t('Doanh thu')}}</h2>
+    <p v-if="length">{{ text }}</p>
     <Pie class="chart center" v-for="item in chartData" :key="item" :options="chartOptions" :data="chartData" />
   </div>
 </template>
@@ -29,20 +33,33 @@ export default {
       chartOptions: {
         responsive: true,
       },
+      length: false,
+      text: '',
+      selectedMonth: null,
+      months: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"]
     };
   },
   mounted() {
+    this.selectedMonth = new Date().getMonth() + 1;
     this.getAll();
   },
+  
   methods: {
+    getDataByMonth(){
+      this.getAll()
+    },
     getAll() {
       axios
-        .get(`http://localhost:8181/api/order/ordersuccess?status=Success`)
+        .get(`http://localhost:8181/api/order/statusandmonth?status=Success&month=${this.selectedMonth}`)
         .then((res) => {
           if (res.data != null && res.status == 200) {
             this.chartData.datasets[0].data = res.data.map(item => item.price);
             this.chartData.labels = res.data.map(item => item.produuctName)
             this.$store.state.isLoading = false;
+            if(res.data.length == 0){
+              this.length = true
+              this.text = 'Không có dữ liệu'
+            }
           }
         })
         .catch(error => {
@@ -55,4 +72,13 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.custom-select {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+}
+</style>

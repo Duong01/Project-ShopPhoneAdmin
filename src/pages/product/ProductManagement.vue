@@ -11,37 +11,73 @@
           Add New
         </button>
       </div>
+      <div class="nav_right">
+        <el-input
+          v-model="searchQuery"
+          style="width: 600px; border-radius: 10px"
+          clearable
+          placeholder="Search"
+          class="input-with-select"
+        >
+          <template #prepend>
+            <el-button
+              type="primary"
+              style="background-color: #409eff; color: #fff"
+              @click="search"
+            >
+              <el-icon style="vertical-align: middle">
+                <Search />
+              </el-icon>
+              <span style="vertical-align: middle">
+                {{ $t("Tìm kiếm") }}
+              </span>
+            </el-button>
+          </template>
+        </el-input>
+      </div>
     </div>
     <el-table
-      :data="Products"
+      :data="displayedProducts"
       border
       style="width: 100%"
       id="my-table"
       v-loading="this.$store.state.isLoading"
     >
-      <el-table-column fixed prop="name" label="Name" width="180" />
-      <el-table-column
-        prop="originalPrice"
-        label="Original Price"
-        width="120"
-      />
-      <el-table-column
-        prop="promotionPrice"
-        label="Promotion Price"
-        width="120"
-      />
-      <el-table-column prop="image" label="Image" width="120" />
-      <el-table-column prop="createdBy" label="CreatedBy" width="100" />
-      <el-table-column prop="createdDate" label="Created Date" width="100" />
-      <el-table-column prop="cateId" label="CateId" width="100" />
-      <el-table-column prop="qty" label="Qty" width="100" />
-      <el-table-column prop="des" label="Des" width="200" />
-      <el-table-column prop="status" label="Status" width="100" />
-      <el-table-column prop="soldCount" label="SoldCount" width="100" />
-      <el-table-column fixed="right" label="Operations" width="150">
+      <el-table-column prop="id" label="Mã" width="50" />
+      <el-table-column prop="name" label="Tên sản phẩm" width="180" />
+      <el-table-column prop="originalPrice" label="Giá gốc" width="120">
+        <template v-slot="scope">
+          {{ Number(scope.row.originalPrice).toLocaleString() }}đ
+        </template>
+      </el-table-column>
+      <el-table-column prop="promotionPrice" label="Giảm giá" width="120" >
+        <template v-slot="scope">
+          {{ Number(scope.row.promotionPrice).toLocaleString() }}đ
+        </template>
+      </el-table-column>
+      <el-table-column prop="image" label="Hình ảnh" width="120" >
+        <template v-slot="scope">
+          <img
+            :src="`http://localhost:8085/Files/${scope.row.image}`"
+            alt="Hình ảnh"
+            style="max-width: 100px; max-height: 100px"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column prop="createdBy" label="Tạo bởi" width="100" />
+      <el-table-column prop="createdDate" label="Ngày tạo" width="100" />
+      <el-table-column prop="cateId" label="Mã danh mục" width="100" />
+      <el-table-column prop="qty" label="Số lượng" width="100" />
+      <el-table-column prop="des" label="Miêu tả" width="200" />
+      <el-table-column prop="status" label="Star" width="100" />
+      <el-table-column prop="soldCount" label="Số lượng bán" width="100" />
+      <el-table-column fixed="right" label="Thao tác" width="150">
         <template v-slot="scope">
           <el-tooltip content="Edit" placement="top">
-            <el-button link type="warning" @click="isUpdate(scope.row),showupdate = true"
+            <el-button
+              link
+              type="warning"
+              @click="isUpdate(scope.row), (showupdate = true)"
               ><el-icon><Edit /></el-icon
             ></el-button>
           </el-tooltip>
@@ -53,17 +89,18 @@
         </template>
       </el-table-column>
     </el-table>
-
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[10, 20, 30, 40]"
+      :page-sizes="[5, 10, 20, 30, 40]"
+      background
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     >
     </el-pagination>
+    <!-- Add new -->
     <el-dialog
       v-model="dialogFormVisible"
       title="Add new Product"
@@ -77,7 +114,6 @@
           <el-input-number
             v-model="form.OriginalPrice"
             class="mx-4"
-            
             controls-position="right"
             :min="0"
             :step="1"
@@ -88,7 +124,6 @@
           <el-input-number
             v-model="form.PromotionPrice"
             class="mx-4"
-            
             controls-position="right"
             :min="0"
             :step="1"
@@ -122,15 +157,13 @@
               v-for="option in options"
               :key="option.id"
               :value="option.id"
-              
             >
               {{ option.name }}
             </el-option>
           </el-select>
-          
         </el-form-item>
         <el-form-item label="Qty" :label-width="formLabelWidth">
-          <el-input-number  v-model="form.Qty" :min="0" />
+          <el-input-number v-model="form.Qty" :min="0" />
         </el-form-item>
         <el-form-item label="Describe" :label-width="formLabelWidth">
           <el-input v-model="form.des" autocomplete="off" />
@@ -138,7 +171,6 @@
         <el-form-item label="SoldCount" :label-width="formLabelWidth">
           <el-input-number
             disabled
-            
             v-model="form.soldCount"
             :min="0"
             :step="1"
@@ -148,17 +180,14 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="dialogFormVisible = false">Cancel</el-button>
-          <el-button  :plain="true" type="primary" @click="clickSave">
+          <el-button :plain="true" type="primary" @click="clickSave">
             Add
           </el-button>
         </div>
       </template>
     </el-dialog>
-    <el-dialog
-      v-model="showupdate"
-      title="Update Product"
-      width="800px"
-    >
+    <!-- Update -->
+    <el-dialog v-model="showupdate" title="Update Product" width="800px">
       <el-form :model="form">
         <el-form-item label="Id" :label-width="formLabelWidth">
           <el-input disabled v-model="id" autocomplete="off" />
@@ -236,13 +265,12 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button @click="showupdate = false">Cancel</el-button>
-          <el-button  :plain="true" type="primary" @click="clickUpdate">
+          <el-button :plain="true" type="primary" @click="clickUpdate">
             Save
           </el-button>
         </div>
       </template>
     </el-dialog>
-    
   </div>
 </template>
 
@@ -253,6 +281,7 @@ export default {
   name: "ProductManagement",
   data() {
     return {
+      searchQuery: '',
       currentPage: 1,
       pageSize: 10,
       total: 0,
@@ -287,13 +316,30 @@ export default {
   methods: {
     handleSizeChange(val) {
       this.pageSize = val;
+      this.currentPage = 1; // Reset lại trang về 1 khi thay đổi kích thước trang
       this.getAll();
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.getAll();
+      this.getAll;
     },
-
+    search(){
+      const encodedProductName = encodeURIComponent(this.searchQuery)
+      axios.get(`http://localhost:8181/api/products/searchproduct?name=${encodedProductName}`)
+      .then(res =>{
+        if(res.status == 200){
+          this.Products = res.data;
+        }
+      })
+      .catch(() =>{});
+      axios.get(`http://localhost:8181/api/products/searchproductbyId?id=${encodedProductName}`)
+      .then(res =>{
+        if(res.status == 200){
+          this.Products = res.data;
+        }
+      })
+      .catch(() =>{})
+    },
     changeLocation() {
       axios.get("http://localhost:8181/api/categories/listcate").then((res) => {
         this.options = res.data;
@@ -325,14 +371,17 @@ export default {
       this.timenow = dateTime;
     },
     getAll() {
-      axios
-        .get("http://localhost:8181/api/products/listproduct")
-        .then((res) => {
-          this.Products = res.data;
-          this.list = res.data;
-          this.total = res.data.length;
-          this.$store.state.isLoading = false;
-        });
+      try {
+        axios
+          .get("http://localhost:8181/api/products/listproduct")
+          .then((res) => {
+            this.Products = res.data;
+            this.total = res.data.length;
+            this.$store.state.isLoading = false;
+          });
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
       this.$store.state.isLoading = true;
     },
     previewFiles(event) {
@@ -345,15 +394,17 @@ export default {
       theRender.readAsDataURL(this.selectedFile);
     },
     clickSave() {
-      
-      if (this.form.name == "" || this.selectedFile == null || this.form.selected == null) {
+      if (
+        this.form.name == "" ||
+        this.selectedFile == null ||
+        this.form.selected == null
+      ) {
         ElMessage({
           message: "Please check data.",
           grouping: true,
           type: "error",
         });
-      }
-       else {
+      } else {
         let formObj = { a: "Duong", address: "BG VN" };
         var formData = new FormData();
         formData.append("dataForm", btoa(JSON.stringify(formObj)));
@@ -387,7 +438,7 @@ export default {
           .then((res) => {
             if (res.status == 200 && res.data == "ok") {
               alert("Add success");
-              this.dialogFormVisible = false
+              this.dialogFormVisible = false;
               this.getAll();
             }
             if (res.data == "Da co san pham nay") {
@@ -400,44 +451,18 @@ export default {
       }
     },
     clickUpdate() {
-      if (this.nameUpdate == "" || this.selectedFile == null || this.cateIdUpdate == null) {
+      if (
+        this.nameUpdate == "" ||
+        this.selectedFile == null ||
+        this.cateIdUpdate == null
+      ) {
         ElMessage({
           message: "Please check data.",
           grouping: true,
           type: "error",
         });
-      }
-      else{
-      let formObj1 = {
-        name: this.form.nameUpdate,
-        originalPrice: this.OriginalPriceUpdate,
-        promotionPrice: this.PromotionPriceUpdate,
-        image: this.selectedFile.name,
-        createdBy: this.getEmpInfor,
-        createdDate: this.timenow,
-        cateId: this.cateIdUpdate,
-        qty: this.QtyUpdate,
-        des: this.desUpdate,
-        status: 1,
-        soldCount: this.soldCountUpdate,
-      };
-      var formData1 = new FormData();
-
-      formData1.append("dataForm", btoa(JSON.stringify(formObj1)));
-      formData1.append("image", this.$refs.clickSaveEdit.files[0]);
-
-      axios
-        .post("http://localhost:8181/api/products/TestPostFile", formData1, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then({})
-        .catch((err) => {
-          console.log(err);
-        });
-      axios.post(`http://localhost:8181/api/products/updateproduct`, {
-          id: this.id,
+      } else {
+        let formObj1 = {
           name: this.form.nameUpdate,
           originalPrice: this.OriginalPriceUpdate,
           promotionPrice: this.PromotionPriceUpdate,
@@ -449,20 +474,50 @@ export default {
           des: this.desUpdate,
           status: 1,
           soldCount: this.soldCountUpdate,
-        })
-        .then((res) => {
-          if (res.data == "Sua thanh cong" && res.status == 200) {
-            alert("Update Success");
-            this.showupdate = false
-            this.getAll();
-          } else {
-            alert("Update Fail");
-            this.getAll();
-          }
-        })
-        .catch((err) => {
-          alert(err);
-        });
+        };
+        var formData1 = new FormData();
+
+        formData1.append("dataForm", btoa(JSON.stringify(formObj1)));
+        formData1.append("image", this.$refs.clickSaveEdit.files[0]);
+
+        axios
+          .post("http://localhost:8181/api/products/TestPostFile", formData1, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then({})
+          .catch((err) => {
+            console.log(err);
+          });
+        axios
+          .post(`http://localhost:8181/api/products/updateproduct`, {
+            id: this.id,
+            name: this.form.nameUpdate,
+            originalPrice: this.OriginalPriceUpdate,
+            promotionPrice: this.PromotionPriceUpdate,
+            image: this.selectedFile.name,
+            createdBy: this.getEmpInfor,
+            createdDate: this.timenow,
+            cateId: this.cateIdUpdate,
+            qty: this.QtyUpdate,
+            des: this.desUpdate,
+            status: 1,
+            soldCount: this.soldCountUpdate,
+          })
+          .then((res) => {
+            if (res.data == "Sua thanh cong" && res.status == 200) {
+              alert("Update Success");
+              this.showupdate = false;
+              this.getAll();
+            } else {
+              alert("Update Fail");
+              this.getAll();
+            }
+          })
+          .catch((err) => {
+            alert(err);
+          });
       }
     },
     isDelete(product) {
@@ -504,15 +559,14 @@ export default {
         });
     },
     isUpdate(item) {
-      
       this.id = item.id;
       this.form.nameUpdate = item.name;
-      this.OriginalPriceUpdate = item.originalPrice,
-      this.PromotionPriceUpdate = item.promotionPrice,
-      this.cateIdUpdate = item.cateId,
-      this.QtyUpdate = item.qty,
-      this.desUpdate = item.des,
-      this.soldCountUpdate = item.soldCount;
+      (this.OriginalPriceUpdate = item.originalPrice),
+        (this.PromotionPriceUpdate = item.promotionPrice),
+        (this.cateIdUpdate = item.cateId),
+        (this.QtyUpdate = item.qty),
+        (this.desUpdate = item.des),
+        (this.soldCountUpdate = item.soldCount);
     },
   },
   computed: {
@@ -521,8 +575,26 @@ export default {
       if (emp != undefined) return emp.id;
       return "";
     },
+    totalPages() {
+      return Math.ceil(this.total / this.pageSize);
+    },
+    displayedProducts() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.Products.slice(startIndex, endIndex);
+    },
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.el-input-group {
+  display: inline-flex;
+  width: 100%;
+  flex-direction: row-reverse;
+  margin-left: 30px;
+}
+.nav_right, .nav_left{
+  margin: 10px;
+}
+</style>

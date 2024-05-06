@@ -1,6 +1,6 @@
 <template>
   <div class="container" v-loading="this.$store.state.isLoading">
-    <h2 class="">{{$t('Số lượng bán ra')}}</h2>
+    <h2 class="">{{ $t("Số lượng bán ra") }}</h2>
     <div class="row justify-content-center">
       <div class="col-md-12">
         <canvas class="chart-canvas" ref="chartCanvas"></canvas>
@@ -10,14 +10,16 @@
 </template>
 
 <script>
-import axios from 'axios';
-import Chart from 'chart.js/auto';
+import axios from "axios";
+import Chart from "chart.js/auto";
 
 export default {
   data() {
     return {
       chartData: null,
-      chart: null
+      chart: null,
+      months: ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"]
+
     };
   },
   mounted() {
@@ -27,44 +29,53 @@ export default {
     fetchData() {
       try {
         axios
-        .get(`http://localhost:8181/api/order/ordersuccess?status=Success`)
-        .then((res) => {
-          if (res.data && res.status === 200) {
-            this.chartData = res.data;
-            this.renderChart()
-            this.$store.state.isLoading = false;
-          }
-        })
+          .get(`http://localhost:8181/api/order/ordersuccess?status=Success`)
+          .then((res) => {
+            if (res.data && res.status === 200) {
+              const allMonthsData = Array.from(
+                { length: this.months.length },
+                () => 0
+              );
+              res.data.forEach((order) => {
+                allMonthsData[new Date(order.receivedDate).getMonth()] += order.qty;
+              });
+              this.chartData = allMonthsData;
+              this.renderChart();
+              this.$store.state.isLoading = false;
+            }
+          });
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error("Error fetching data:", error);
       }
       this.$store.state.isLoading = true;
     },
     renderChart() {
-      const ctx = this.$refs.chartCanvas.getContext('2d');
+      const ctx = this.$refs.chartCanvas.getContext("2d");
       this.chart = new Chart(ctx, {
-        type: 'bar',
+        type: "bar",
         data: {
-          labels: this.chartData.map(order => order.produuctName),
-          datasets: [{
-            label: 'Số lượng',
-            backgroundColor: 'rgb(25, 125, 255)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-            data: this.chartData.map(order => order.qty)
-          }]
+          labels: this.months,
+          datasets: [
+            {
+              label: "Số lượng",
+              backgroundColor: "rgb(25, 125, 255)",
+              borderColor: "rgba(75, 192, 192, 1)",
+              borderWidth: 1,
+              data: this.chartData,
+            },
+          ],
         },
         options: {
           scales: {
             y: {
               beginAtZero: true,
               responsive: true,
-            }
-          }
-        }
+            },
+          },
+        },
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

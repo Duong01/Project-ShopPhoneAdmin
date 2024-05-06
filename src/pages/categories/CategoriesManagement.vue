@@ -11,9 +11,33 @@
           Add New
         </button>
       </div>
+      <div class="nav_right">
+        <el-input
+          v-model="searchQuery"
+          style="width: 600px; border-radius: 10px"
+          clearable
+          placeholder="Search"
+          class="input-with-select"
+        >
+          <template #prepend>
+            <el-button
+              type="primary"
+              style="background-color: #409eff; color: #fff"
+              @click="search"
+            >
+              <el-icon style="vertical-align: middle">
+                <Search />
+              </el-icon>
+              <span style="vertical-align: middle">
+                {{ $t("Tìm kiếm") }}
+              </span>
+            </el-button>
+          </template>
+        </el-input>
+      </div>
     </div>
       <el-table
-        :data="categories"
+        :data="displayedProducts"
         border
         align="center"
         style="width: 100%"
@@ -43,15 +67,16 @@
       </el-table>
       <br>
       <el-pagination
-      align="center"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="currentPage"
-      :page-sizes="[5,10,15]"
+      :page-sizes="[5,10, 20, 30, 40]"
+      background 
       :page-size="pageSize"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
-      />
+    >
+    </el-pagination>
     <!-- Add -->
     <el-dialog
       v-model="dialogFormVisible"
@@ -119,9 +144,10 @@ export default {
   name: "CategoriesManagement",
   data() {
     return {
-      currentPage: 0,
+      searchQuery: '',
+      currentPage: 1,
       pageSize: 5,
-      total: 30,
+      total: 0,
       dialogFormVisible: false,
       showupdate: false,
       formLabelWidth: "140px",
@@ -133,28 +159,35 @@ export default {
     };
   },
   created() {
-    // this.getAll();
-  },
-  mounted() {
     this.getAll();
+  },
+  computed:{
+    totalPages() {
+      return Math.ceil(this.total / this.pageSize);
+    },
+    displayedProducts() {
+      const startIndex = (this.currentPage - 1) * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.categories.slice(startIndex, endIndex);
+    }
   },
   methods: {
 
     handleSizeChange(val) {
       this.pageSize = val;
-      this.getAll();
+      this.currentPage = 1; // Reset lại trang về 1 khi thay đổi kích thước trang
+      this.getAll() 
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.getAll();
+      this.getAll()
     },
     getAll() {
       try {
-        axios.get(`http://localhost:8181/api/categories/listallcate?offset=${this.currentPage}&limit=${this.pageSize}`)
+        axios.get(`http://localhost:8181/api/categories/listcate`)
         .then(response => {
         this.categories = response.data;
-        console.log(response)
-        // this.total = response.data.length;
+        this.total = response.data.length;
         this.$store.state.isLoading = false;
       })
       } catch (error) {
@@ -162,6 +195,24 @@ export default {
       }
       this.$store.state.isLoading = true;
       
+    },
+    search(){
+      
+      const encodedProductName = encodeURIComponent(this.searchQuery)
+      axios.get(`http://localhost:8181/api/cate/searchcate?name=${encodedProductName}`)
+      .then(res =>{
+        if(res.status == 200){
+          this.categories = res.data;
+        }
+      })
+      .catch(() =>{});
+      axios.get(`http://localhost:8181/api/cate/searchcatebyId?id=${encodedProductName}`)
+      .then(res =>{
+        if(res.status == 200){
+          this.categories = res.data;
+        }
+      })
+      .catch(() =>{})
     },
     clickSave() {
       if (this.name == "" || this.status == "") {
@@ -265,19 +316,13 @@ export default {
 </script>
 
 <style scoped>
-.nav {
-  display: block;
-  margin-top: 10px;
+.el-input-group {
+  display: inline-flex;
+  width: 100%;
+  flex-direction: row-reverse;
+  margin-left: 30px;
 }
-.nav_left {
-  float: left;
-  margin: 0 10px;
-}
-.nav_right {
-  float: left;
-  margin: 0 10px;
-}
-th {
-  text-align: center;
+.nav_right, .nav_left{
+  margin: 10px;
 }
 </style>
