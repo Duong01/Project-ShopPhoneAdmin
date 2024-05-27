@@ -16,7 +16,7 @@
         <tr v-for="(item, index) in order" :key="index">
           <td>{{ index + 1 }}</td>
           <td>{{ item.id }}</td>
-          <td>{{ calculateDelivery(item.createDate) }}</td>
+          <td>{{ formatDate(item.createDate) }}</td>
           <td>
             Dự kiến giao hàng {{ calculateDeliveryDate(item.createDate) }}
           </td>
@@ -113,10 +113,21 @@ export default {
   },
   methods: {
     // Date Time
-    calculateDeliveryDate(createDate) {
-      const deliveryDate = new Date(createDate); // Tạo một đối tượng ngày từ ngày đặt hàng
-      deliveryDate.setDate(deliveryDate.getDate() + 3); // Thêm 3 ngày vào ngày đặt hàng
-      return deliveryDate.toISOString().slice(0, 10); // Trả về ngày giao hàng dự kiến dưới dạng YYYY-MM-DD
+    formatDate(dateString) {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    },
+    // Date Time
+    calculateDeliveryDate(dateString) {
+      const date = new Date(dateString);
+      date.setDate(date.getDate() + 3); // Cộng thêm 3 ngày
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
     },
     calculateDelivery(createDate) {
       const deliveryDate = new Date(createDate); // Tạo một đối tượng ngày từ ngày đặt hàng

@@ -3,6 +3,9 @@
     <select v-model="selectedMonth" @change="getDataByMonth" class="custom-select">
       <option v-for="(month, index) in months" :key="index" :value="index+1">{{ month }}</option>
     </select>
+    <br>
+    <br>
+    <h5 style="color: red; border: 1px solid #ccc; width:auto; height:70px; line-height: 70px; background-color: #dddd;">Tổng doanh thu tháng này: {{ total.toLocaleString() }}vnđ</h5>
     <h2 class="">{{$t('Doanh thu')}}</h2>
     <p v-if="length">{{ text }}</p>
     <Pie class="chart center" v-for="item in chartData" :key="item" :options="chartOptions" :data="chartData" />
@@ -21,6 +24,7 @@ export default {
   components: { Pie },
   data() {
     return {
+      total: 0,
       chartData: {
         labels: [],
         datasets: [
@@ -43,7 +47,7 @@ export default {
     this.selectedMonth = new Date().getMonth() + 1;
     this.getAll();
   },
-  
+
   methods: {
     getDataByMonth(){
       this.getAll()
@@ -56,6 +60,7 @@ export default {
             this.chartData.datasets[0].data = res.data.map(item => item.price);
             this.chartData.labels = res.data.map(item => item.produuctName)
             this.$store.state.isLoading = false;
+            this.total = res.data.map(item => item.price).reduce((total, amount) => total + amount, 0)
             if(res.data.length == 0){
               this.length = true
               this.text = 'Không có dữ liệu'
